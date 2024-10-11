@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -41,4 +42,29 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function hasRole($role)
+    {
+        return $this->role === $role;
+    }
+
+    public static function addOrUpdate($userId,$name,$email,$role)
+    {
+        $user = $userId ? User::find($userId) : new User();
+        $user->name = $name;
+        $user->email = $email;
+        $user->role = $role;
+        $user->password = bcrypt('12345678');
+        $user->save();
+    }
+
+    public static function getUser($role)
+    {
+        return User::where('role',$role)->get();
+    }
+
+    public static function deleteUser($id)
+    {
+        User::where('id',$id)->delete();
+    }
 }

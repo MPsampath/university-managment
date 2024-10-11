@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('role')-;  // Default role is 'Student'
+        Schema::create('faculties', function (Blueprint $table) {
+            $table->integerIncrements('facultyId');
+            $table->string('facultyName',200);
         });
     }
 
@@ -21,8 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('role');
-        });
+        Schema::dropIfExists('faculties');
     }
 };

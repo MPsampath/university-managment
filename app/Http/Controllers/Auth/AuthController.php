@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    // Show Login Form
+    public function showLoginForm()
+    {
+        return view('auth.login');
+    }
+
     public static function login(Request $request)
     {
         $credentials = $request->validate([
@@ -15,14 +21,23 @@ class AuthController extends Controller
             'password' => 'required']);
 
         if (Auth::attempt($credentials)) {
-            $token = $request->user()->createToken('auth_token');
-         
-            return response()->json(
-                ['message' => 'Login successful',
-                'user' => Auth::user(),
-                'token' => $token->plainTextToken],
-                200);
+            $request->session()->regenerate();
+            return redirect()->intended('/');
         }
-        return response()->json(['message' => 'Login failed'], 401);
+
+       return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ]);
+    }
+
+      // Handle Logout
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/loginHome');
     }
 }
